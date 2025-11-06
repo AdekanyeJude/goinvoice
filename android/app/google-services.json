@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "144541344010",
+    "project_id": "go-invoice-4a5db",
+    "storage_bucket": "go-invoice-4a5db.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144541344010:android:dd3bf54dd25e02a0179af3",
+        "android_client_info": {
+          "package_name": "com.example.go_invoice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqzQfGVuI37nmzLZJU_GytD_zWtiotI10"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
