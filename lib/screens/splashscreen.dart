@@ -6,7 +6,7 @@ import 'package:go_invoice/screens/home/home_screen.dart';
 import 'package:go_invoice/screens/home/input_screen.dart';
 import 'package:go_invoice/screens/utills/sizedBox.dart';
 import 'package:go_invoice/screens/utills/toast.dart';
-import 'package:internet_popup/internet_popup.dart';
+// import 'package:internet_popup/internet_popup.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

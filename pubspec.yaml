@@ -51,7 +51,7 @@ dependencies:
   cloud_firestore: 
   firebase_core: 
   firebase_analytics:  
-  internet_popup: 1.0.5
+  # internet_popup: 1.0.5
 
 
   # The following adds the Cupertino Icons font to your application.
