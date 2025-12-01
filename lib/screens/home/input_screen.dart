@@ -5,7 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_invoice/colors/colors.dart';
+import 'package:go_invoice/screens/home/invoice_item_model.dart';
+import 'package:go_invoice/screens/home/invoice_model.dart';
 import 'package:go_invoice/screens/home/invoice_screen.dart';
+import 'package:go_invoice/screens/home/storage_service.dart';
 import 'package:go_invoice/screens/utills/dropdown.dart';
 import 'package:go_invoice/screens/utills/fields/companytextfield.dart';
 import 'package:go_invoice/screens/utills/fields/date_field.dart';
@@ -360,6 +363,7 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
     });
   }
 
+// final Invoice invoice;
   List modeOfPaymentList = ['Cash', 'Transfer'];
   List termList = ['FIRST TERM', 'SECOND TERM', 'THIRD TERM'];
   List sessionList = [
@@ -399,141 +403,156 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
   String companyBankName = 'FIRSTBANK OF NIGERIA';
   // String companyAcctNum = '2034372892';
   String invoiceNum = '';
-  Future createUser({
-    // required id,
-    required customerName,
-    required customerPhoneno,
-    required dueDate,
-    required item,
-    required quantity,
-    required price,
-    required amountPaid,
-    // required shippingFee,
-    required session,
-    required totalAmountPaid,
-    required total,
-    required balance,
-    required itemTwo,
-    required quantityTwo,
-    required priceTwo,
-    required amountPaidTwo,
-    required itemThree,
-    required quantityThree,
-    required priceThree,
-    required amountPaidThree,
-    required itemFour,
-    required quantityFour,
-    required priceFour,
-    required amountPaidFour,
-    required itemFive,
-    required quantityFive,
-    required priceFive,
-    required amountPaidFive,
-    required classcontroller,
-    required bankName,
-    required companyaccountNumber,
-    itemSix,
-    quantitySix,
-    priceSix,
-    amountPaidSix,
-    itemSeven,
-    quantitySeven,
-    priceSeven,
-    amountPaidSeven,
-    itemEight,
-    quantityEight,
-    priceEight,
-    amountPaidEight,
-    itemNine,
-    quantityNine,
-    priceNine,
-    amountPaidNine,
-    itemTen,
-    quantityTen,
-    priceTen,
-    amountPaidTen,
 
-    // required modeofPayment
-  }) async {
-    var collection = FirebaseFirestore.instance.collection('invoice');
-    var allDocs = await collection.get();
-    if (allDocs.docs.isNotEmpty) {
-      invoiceNum = (int.parse(allDocs.docs.last.id) + 1).toString();
-    } else {
-      // int.parse(allDocs.docs.last.id) +
-      invoiceNum = (1000).toString();
+  Future<Invoice> createInvoiceFromForm() async {
+    final id = StorageService.generateNextInvoiceNumber();
+
+    final items = <InvoiceItem>[];
+    // add only rows that have data, e.g. if itemOne != ''
+    items.add(InvoiceItem(
+      item: itemOneController.text,
+      quantity: int.tryParse(quantityOneController.text) ?? 0,
+      price: double.tryParse(priceOneController.text) ?? 0,
+    ));
+    if (itemTwoController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemTwoController.text,
+          quantity: int.tryParse(quantityTwoController.text) ?? 0,
+          price: double.tryParse(priceTwoController.text) ?? 0.0,
+          // total: (int.tryParse(quantityTwoController.text) ?? 0) *
+          //     (double.tryParse(priceTwoController.text) ?? 0.0),
+        ),
+      );
     }
-    // final voice= (int.parse(allDocs.docs.last) + 1).toString();
-    // invoiceNum = number;
+// 3
+    if (itemThreeController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemThreeController.text,
+          quantity: int.tryParse(quantityThreeController.text) ?? 0,
+          price: double.tryParse(priceThreeController.text) ?? 0.0,
+          // total: (int.tryParse(quantityThreeController.text) ?? 0) *
+          //     (double.tryParse(priceThreeController.text) ?? 0.0),
+        ),
+      );
+    }
 
-    print("invoive numbwr ${invoiceNum}");
+// 4
+    if (itemFourController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemFourController.text,
+          quantity: int.tryParse(quantityFourController.text) ?? 0,
+          price: double.tryParse(priceFourController.text) ?? 0.0,
+          // total: (int.tryParse(quantityFourController.text) ?? 0) *
+          //     (double.tryParse(priceFourController.text) ?? 0.0),
+        ),
+      );
+    }
 
-    final docuser =
-        FirebaseFirestore.instance.collection('invoice').doc(invoiceNum);
-    final json = {
-      'companyLogo': 'assets/images/Christfield.jpg',
-      'companyName': companyName,
-      'customerName': customerName,
-      'id': invoiceNum,
-      'customerPhoneNumber': customerPhoneno,
-      'companyAccountName': companyAcctName,
-      'bank': bankName,
-      'companyAccountNumber': companyaccountNumber,
-      'modeOfPayment': selectedPAymentMode,
-      'date': formattedDate,
-      'item': item,
-      'quantity': quantity,
-      'price': price,
-      'amountPaid': amountPaid,
-      // 'shippingFee': shippingFee,
-      // 'discount': discount,
-      // 'tax': tax,
-      'total': total,
-      'balance': balance,
-      'dueDate': dueDate,
-      'itemTwo': itemTwo,
-      'quantityTwo': quantityTwo,
-      'priceTwo': priceTwo,
-      'amountPaidTwo': amountPaidTwo,
-      'itemThree': itemThree,
-      'quantityThree': quantityThree,
-      'priceThree': priceThree,
-      'amountPaidThree': amountPaidThree,
-      'itemFour': itemFour,
-      'quantityFour': quantityFour,
-      'priceFour': priceFour,
-      'amountPaidFour': amountPaidFour,
-      'itemFive': itemFive,
-      'quantityFive': quantityFive,
-      'priceFive': priceFive,
-      'amountPaidFive': amountPaidFive,
-      'itemSix': itemSix,
-      'quantitySix': quantitySix,
-      'priceSix': priceSix,
-      'amountPaidSix': amountPaidSix,
-      'itemSeven': itemSeven,
-      'quantitySeven': quantitySeven,
-      'priceSeven': priceSeven,
-      'amountPaidSeven': amountPaidSeven,
-      'itemEight': itemEight,
-      'quantityEight': quantityEight,
-      'priceEight': priceEight,
-      'amountPaidEight': amountPaidEight,
-      'itemNine': itemNine,
-      'quantityNine': quantityNine,
-      'priceNine': priceNine,
-      'amountPaidNine': amountPaidNine,
-      'itemTen': itemTen,
-      'quantityTen': quantityTen,
-      'priceTen': priceTen,
-      'amountPaidTen': amountPaidTen,
-      'session': session,
-      'totalAmountPaid': totalAmountPaid,
-      'term': selectedTerm,
-      'studentClass': selectedClass,
-      'uid': invoiceNum
-    };
-    await docuser.set(json);
+// 5
+    if (itemFiveController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemFiveController.text,
+          quantity: int.tryParse(quantityFiveController.text) ?? 0,
+          price: double.tryParse(priceFiveController.text) ?? 0.0,
+          // total: (int.tryParse(quantityFiveController.text) ?? 0) *
+          //     (double.tryParse(priceFiveController.text) ?? 0.0),
+        ),
+      );
+    }
+
+// 6
+    if (itemSixController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemSixController.text,
+          quantity: int.tryParse(quantitySixController.text) ?? 0,
+          price: double.tryParse(priceSixController.text) ?? 0.0,
+          // total: (int.tryParse(quantitySixController.text) ?? 0) *
+          //     (double.tryParse(priceSixController.text) ?? 0.0),
+        ),
+      );
+    }
+
+// 7
+    if (itemSevenController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemSevenController.text,
+          quantity: int.tryParse(quantitySevenController.text) ?? 0,
+          price: double.tryParse(priceSevenController.text) ?? 0.0,
+          // total: (int.tryParse(quantitySevenController.text) ?? 0) *
+          //     (double.tryParse(priceSevenController.text) ?? 0.0),
+        ),
+      );
+    }
+
+// 8
+    if (itemEightController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemEightController.text,
+          quantity: int.tryParse(quantityEightController.text) ?? 0,
+          price: double.tryParse(priceEightController.text) ?? 0.0,
+          // total: (int.tryParse(quantityEightController.text) ?? 0) *
+          //     (double.tryParse(priceEightController.text) ?? 0.0),
+        ),
+      );
+    }
+
+// 9
+    if (itemNineController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemNineController.text,
+          quantity: int.tryParse(quantityNineController.text) ?? 0,
+          price: double.tryParse(priceNineController.text) ?? 0.0,
+          // total: (int.tryParse(quantityNineController.text) ?? 0) *
+          //     (double.tryParse(priceNineController.text) ?? 0.0),
+        ),
+      );
+    }
+
+// 10
+    if (itemTenController.text.isNotEmpty) {
+      items.add(
+        InvoiceItem(
+          item: itemTenController.text,
+          quantity: int.tryParse(quantityTenController.text) ?? 0,
+          price: double.tryParse(priceTenController.text) ?? 0.0,
+          // total: (int.tryParse(quantityTenController.text) ?? 0) *
+          //     (double.tryParse(priceTenController.text) ?? 0.0),
+        ),
+      );
+    } // ... repeat for other rows
+
+    final invoice = Invoice(
+      id: id,
+      date: formattedDate,
+      companyName: companyName,
+      customerName: customernameTextController.text,
+      customerPhone: phoneNumberTextController.text,
+      dialCode: '+234',
+      accountNumber: accountNumController.text,
+      accountName: companyAcctName,
+      bankName: bankcontroller.text,
+      modeOfPayment: selectedPAymentMode ?? '',
+      items: items,
+      total: double.tryParse(totalController.text) ?? 0.0,
+      totalPaid: double.tryParse(totalAmountPaidController.text) ?? 0.0,
+      balance: double.tryParse(balanceController.text) ?? 0.0,
+      dueDate: dueDateController.text,
+      session: selectedSession ?? '',
+      term: selectedTerm ?? '',
+      studentClass: selectedClass ?? '',
+    );
+
+    await StorageService.addInvoice(invoice);
+    return invoice;
+    // invoice=invoice;
   }
 
   int rowItemCount = 2;
@@ -726,14 +745,6 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
                               });
                             }),
                           ),
-                          // SizedBox(
-                          //   width: 112,
-                          //   child: nametextField(
-                          //     'Class',
-                          //     'Nursery 1',
-                          //     classTextController,
-                          //   ),
-                          // ),
                         ],
                       ),
                       SizedBox(
@@ -770,15 +781,6 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
                                       bankcontroller.text = value;
                                     });
                                   })),
-                              // Text(
-                              //   'FIRSTBANK OF NIGERIA',
-                              //   textAlign: TextAlign.start,
-                              //   style: TextStyle(
-                              //       fontFamily: 'DM Sans',
-                              //       fontWeight: FontWeight.w500,
-                              //       fontSize: 15,
-                              //       color: colorCodes.background),
-                              // ),
                             ],
                           )),
                           widthsizedBox(6.0),
@@ -1048,7 +1050,7 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
                   SizedBox(
                     height: 63,
                     width: 120,
-                    child: authbtn('Generate\nInvoice', () {
+                    child: authbtn('Generate\nInvoice', () async {
                       if (customernameTextController.text.isEmpty ||
                           itemOneController.text.isEmpty ||
                           quantityOneController.text.isEmpty ||
@@ -1073,133 +1075,15 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
                         showToast('Please input the fields properly',
                             colorCodes.redAccent, context);
                       } else {
-                        createUser(
-                            customerName: customernameTextController.text,
-                            customerPhoneno:
-                                '+234${phoneNumberTextController.text}',
-                            dueDate: dueDateController.text,
-                            item: itemOneController.text,
-                            quantity: quantityOneController.text,
-                            price: priceOneController.text,
-                            amountPaid: amountPaidOneController.text,
-                            total: totalController.text,
-                            balance: balanceController.text,
-                            itemTwo: itemTwoController.text,
-                            quantityTwo: quantityTwoController.text,
-                            priceTwo: priceTwoController.text,
-                            amountPaidTwo: amountPaidTwoController.text,
-                            itemThree: itemThreeController.text,
-                            quantityThree: quantityThreeController.text,
-                            priceThree: priceThreeController.text,
-                            amountPaidThree: amountPaidThreeController.text,
-                            itemFour: itemFourController.text,
-                            quantityFour: quantityFourController.text,
-                            priceFour: priceFourController.text,
-                            amountPaidFour: amountPaidFourController.text,
-                            itemFive: itemFiveController.text,
-                            quantityFive: quantityFiveController.text,
-                            priceFive: priceFiveController.text,
-                            amountPaidFive: amountPaidFiveController.text,
-                            session:
-                                selectedSession, //sessionTextController.text,
-                            totalAmountPaid: totalAmountPaidController.text,
-                            classcontroller: selectedClass,
-                            companyaccountNumber: accountNumController.text,
-                            bankName: bankcontroller.text,
-                            itemSix: itemSixController.text,
-                            quantitySix: quantitySixController.text,
-                            priceSix: priceSixController.text,
-                            amountPaidSix: amountSixController.text,
-                            itemSeven: itemSevenController.text,
-                            quantitySeven: quantitySevenController.text,
-                            priceSeven: priceSevenController.text,
-                            amountPaidSeven: amountPaidSevenController.text,
-                            itemEight: itemEightController.text,
-                            quantityEight: quantityEightController.text,
-                            priceEight: priceEightController.text,
-                            amountPaidEight: amountPaidEightController.text,
-                            itemNine: itemNineController.text,
-                            quantityNine: quantityNineController.text,
-                            priceNine: priceNineController.text,
-                            amountPaidNine: amountPaidNineController.text,
-                            itemTen: itemTenController.text,
-                            quantityTen: quantityTenController.text,
-                            priceTen: priceTenController.text,
-                            amountPaidTen: amountPaidTenController.text);
+                        Invoice invoice =
+                            await createInvoiceFromForm(); // ✅ now works
+                        // ✅ GET RETURNED INVOICE
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => InvoiceScreen(
-                                    date: formattedDate,
-                                    // companyLogo: selectedImage,
-                                    companyName: companyNameTextController.text,
-                                    customerName:
-                                        customernameTextController.text,
-                                    customerphone:
-                                        phoneNumberTextController.text,
-                                    dialCode: '+234',
-                                    companyAcctNum: accountNumController.text,
-                                    item: itemOneController.text,
-                                    quantity: quantityOneController.text,
-                                    price: priceOneController.text,
-                                    amountPaid: amountPaidOneController.text,
-                                    companyAcctName:
-                                        accountNameTextController.text,
-                                    total: totalController.text,
-                                    balance: balanceController.text,
-                                    dueDate: dueDateController.text,
-                                    invoiceNumber: invoiceNum,
-                                    itemTwo: itemTwoController.text,
-                                    quantityTwo: quantityTwoController.text,
-                                    priceTwo: priceTwoController.text,
-                                    amountPaidTwo: amountPaidTwoController.text,
-                                    itemThree: itemThreeController.text,
-                                    quantityThree: quantityThreeController.text,
-                                    priceThree: priceThreeController.text,
-                                    amountPaidThree:
-                                        amountPaidThreeController.text,
-                                    bankName: bankcontroller.text,
-                                    modeofpayment: selectedPAymentMode,
-                                    itemFour: itemFourController.text,
-                                    quantityFour: quantityFourController.text,
-                                    priceFour: priceFourController.text,
-                                    amountPaidFour:
-                                        amountPaidFourController.text,
-                                    itemFive: itemFiveController.text,
-                                    quantityFive: quantityFiveController.text,
-                                    priceFive: priceFiveController.text,
-                                    amountPaidFive:
-                                        amountPaidFiveController.text,
-                                    session:
-                                        selectedSession, //sessionTextController.text,
-                                    term: selectedTerm,
-                                    totalAmountPaid:
-                                        totalAmountPaidController.text,
-                                    studentClass: selectedClass,
-                                    itemSix: itemSixController.text,
-                                    quantitySix: quantitySixController.text,
-                                    priceSix: priceSixController.text,
-                                    amountPaidSix: amountSixController.text,
-                                    itemSeven: itemSevenController.text,
-                                    quantitySeven: quantitySevenController.text,
-                                    priceSeven: priceSevenController.text,
-                                    amountPaidSeven:
-                                        amountPaidSevenController.text,
-                                    itemEight: itemEightController.text,
-                                    quantityEight: quantityEightController.text,
-                                    priceEight: priceEightController.text,
-                                    amountPaidEight:
-                                        amountPaidEightController.text,
-                                    itemNine: itemNineController.text,
-                                    quantityNine: quantityNineController.text,
-                                    priceNine: priceNineController.text,
-                                    amountPaidNine:
-                                        amountPaidNineController.text,
-                                    itemTen: itemTenController.text,
-                                    quantityTen: quantityTenController.text,
-                                    priceTen: priceTenController.text,
-                                    amountPaidTen:
-                                        amountPaidTenController.text)));
+                                      invoice: invoice,
+                                    )));
                       }
                     }),
                   ),
@@ -1227,3 +1111,198 @@ class _InvoiceInputScreenState extends State<InvoiceInputScreen> {
         ));
   }
 }
+
+
+
+  // Future createUser({
+  //   // required id,
+  //   required customerName,
+  //   required customerPhoneno,
+  //   required dueDate,
+  //   required item,
+  //   required quantity,
+  //   required price,
+  //   required amountPaid,
+  //   // required shippingFee,
+  //   required session,
+  //   required totalAmountPaid,
+  //   required total,
+  //   required balance,
+  //   required itemTwo,
+  //   required quantityTwo,
+  //   required priceTwo,
+  //   required amountPaidTwo,
+  //   required itemThree,
+  //   required quantityThree,
+  //   required priceThree,
+  //   required amountPaidThree,
+  //   required itemFour,
+  //   required quantityFour,
+  //   required priceFour,
+  //   required amountPaidFour,
+  //   required itemFive,
+  //   required quantityFive,
+  //   required priceFive,
+  //   required amountPaidFive,
+  //   required classcontroller,
+  //   required bankName,
+  //   required companyaccountNumber,
+  //   itemSix,
+  //   quantitySix,
+  //   priceSix,
+  //   amountPaidSix,
+  //   itemSeven,
+  //   quantitySeven,
+  //   priceSeven,
+  //   amountPaidSeven,
+  //   itemEight,
+  //   quantityEight,
+  //   priceEight,
+  //   amountPaidEight,
+  //   itemNine,
+  //   quantityNine,
+  //   priceNine,
+  //   amountPaidNine,
+  //   itemTen,
+  //   quantityTen,
+  //   priceTen,
+  //   amountPaidTen,
+
+  //   // required modeofPayment
+  // }) async {
+  //   var collection = FirebaseFirestore.instance.collection('invoice');
+  //   var allDocs = await collection.get();
+  //   if (allDocs.docs.isNotEmpty) {
+  //     invoiceNum = (int.parse(allDocs.docs.last.id) + 1).toString();
+  //   } else {
+  //     // int.parse(allDocs.docs.last.id) +
+  //     invoiceNum = (1000).toString();
+  //   }
+  //   // final voice= (int.parse(allDocs.docs.last) + 1).toString();
+  //   // invoiceNum = number;
+
+  //   print("invoive numbwr ${invoiceNum}");
+
+  //   final docuser =
+  //       FirebaseFirestore.instance.collection('invoice').doc(invoiceNum);
+  //   final json = {
+  //     'companyLogo': 'assets/images/Christfield.jpg',
+  //     'companyName': companyName,
+  //     'customerName': customerName,
+  //     'id': invoiceNum,
+  //     'customerPhoneNumber': customerPhoneno,
+  //     'companyAccountName': companyAcctName,
+  //     'bank': bankName,
+  //     'companyAccountNumber': companyaccountNumber,
+  //     'modeOfPayment': selectedPAymentMode,
+  //     'date': formattedDate,
+  //     'item': item,
+  //     'quantity': quantity,
+  //     'price': price,
+  //     'amountPaid': amountPaid,
+  //     // 'shippingFee': shippingFee,
+  //     // 'discount': discount,
+  //     // 'tax': tax,
+  //     'total': total,
+  //     'balance': balance,
+  //     'dueDate': dueDate,
+  //     'itemTwo': itemTwo,
+  //     'quantityTwo': quantityTwo,
+  //     'priceTwo': priceTwo,
+  //     'amountPaidTwo': amountPaidTwo,
+  //     'itemThree': itemThree,
+  //     'quantityThree': quantityThree,
+  //     'priceThree': priceThree,
+  //     'amountPaidThree': amountPaidThree,
+  //     'itemFour': itemFour,
+  //     'quantityFour': quantityFour,
+  //     'priceFour': priceFour,
+  //     'amountPaidFour': amountPaidFour,
+  //     'itemFive': itemFive,
+  //     'quantityFive': quantityFive,
+  //     'priceFive': priceFive,
+  //     'amountPaidFive': amountPaidFive,
+  //     'itemSix': itemSix,
+  //     'quantitySix': quantitySix,
+  //     'priceSix': priceSix,
+  //     'amountPaidSix': amountPaidSix,
+  //     'itemSeven': itemSeven,
+  //     'quantitySeven': quantitySeven,
+  //     'priceSeven': priceSeven,
+  //     'amountPaidSeven': amountPaidSeven,
+  //     'itemEight': itemEight,
+  //     'quantityEight': quantityEight,
+  //     'priceEight': priceEight,
+  //     'amountPaidEight': amountPaidEight,
+  //     'itemNine': itemNine,
+  //     'quantityNine': quantityNine,
+  //     'priceNine': priceNine,
+  //     'amountPaidNine': amountPaidNine,
+  //     'itemTen': itemTen,
+  //     'quantityTen': quantityTen,
+  //     'priceTen': priceTen,
+  //     'amountPaidTen': amountPaidTen,
+  //     'session': session,
+  //     'totalAmountPaid': totalAmountPaid,
+  //     'term': selectedTerm,
+  //     'studentClass': selectedClass,
+  //     'uid': invoiceNum
+  //   };
+  //   await docuser.set(json);
+  // }
+
+
+                        // createUser(
+                        //     customerName: customernameTextController.text,
+                        //     customerPhoneno:
+                        //         '+234${phoneNumberTextController.text}',
+                        //     dueDate: dueDateController.text,
+                        //     item: itemOneController.text,
+                        //     quantity: quantityOneController.text,
+                        //     price: priceOneController.text,
+                        //     amountPaid: amountPaidOneController.text,
+                        //     total: totalController.text,
+                        //     balance: balanceController.text,
+                        //     itemTwo: itemTwoController.text,
+                        //     quantityTwo: quantityTwoController.text,
+                        //     priceTwo: priceTwoController.text,
+                        //     amountPaidTwo: amountPaidTwoController.text,
+                        //     itemThree: itemThreeController.text,
+                            // quantityThree: quantityThreeController.text,
+                            // priceThree: priceThreeController.text,
+                            // amountPaidThree: amountPaidThreeController.text,
+                            // itemFour: itemFourController.text,
+                            // quantityFour: quantityFourController.text,
+                            // priceFour: priceFourController.text,
+                            // amountPaidFour: amountPaidFourController.text,
+                            // itemFive: itemFiveController.text,
+                            // quantityFive: quantityFiveController.text,
+                            // priceFive: priceFiveController.text,
+                            // amountPaidFive: amountPaidFiveController.text,
+                            // session:
+                            //     selectedSession, //sessionTextController.text,
+                            // totalAmountPaid: totalAmountPaidController.text,
+                            // classcontroller: selectedClass,
+                            // companyaccountNumber: accountNumController.text,
+                            // bankName: bankcontroller.text,
+                            // itemSix: itemSixController.text,
+                            // quantitySix: quantitySixController.text,
+                            // priceSix: priceSixController.text,
+                            // amountPaidSix: amountSixController.text,
+                            // itemSeven: itemSevenController.text,
+                            // quantitySeven: quantitySevenController.text,
+                            // priceSeven: priceSevenController.text,
+                            // amountPaidSeven: amountPaidSevenController.text,
+                            // itemEight: itemEightController.text,
+                            // quantityEight: quantityEightController.text,
+                            // priceEight: priceEightController.text,
+                            // amountPaidEight: amountPaidEightController.text,
+                            // itemNine: itemNineController.text,
+                            // quantityNine: quantityNineController.text,
+                            // priceNine: priceNineController.text,
+                            // amountPaidNine: amountPaidNineController.text,
+                            // itemTen: itemTenController.text,
+                            // quantityTen: quantityTenController.text,
+                            // priceTen: priceTenController.text,
+                            // amountPaidTen: amountPaidTenController.text);
+            

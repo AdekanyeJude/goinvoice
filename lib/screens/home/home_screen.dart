@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_invoice/colors/colors.dart';
 import 'package:go_invoice/screens/home/input_screen.dart';
+import 'package:go_invoice/screens/home/invoice_item_model.dart';
+import 'package:go_invoice/screens/home/invoice_model.dart';
 import 'package:go_invoice/screens/home/receipt_screen.dart';
 import 'package:go_invoice/screens/home/update_screen.dart';
 import 'package:go_invoice/screens/home/user.dart';
@@ -46,6 +48,36 @@ class _HomeScreenState extends State<HomeScreen> {
     //   DocumentReference? docc;
     //    FirebaseFirestore.instance
     //       .collection('invoice').where(docc!.id, isGreaterThan: '1003' );
+  }
+
+  List<InvoiceItem> _buildItemsFromUser(User user) {
+    final items = <InvoiceItem>[];
+
+    void addIfNotEmpty(String item, String qtyStr, String priceStr) {
+      if (item.isNotEmpty) {
+        final qty = int.tryParse(qtyStr) ?? 0;
+        final price = double.tryParse(priceStr) ?? 0.0;
+
+        items.add(InvoiceItem(
+          item: item,
+          quantity: qty,
+          price: price,
+        ));
+      }
+    }
+
+    addIfNotEmpty(user.item, user.quantity, user.price);
+    addIfNotEmpty(user.itemTwo, user.quantityTwo, user.priceTwo);
+    addIfNotEmpty(user.itemThree, user.quantityThree, user.priceThree);
+    addIfNotEmpty(user.itemFour, user.quantityFour, user.priceFour);
+    addIfNotEmpty(user.itemFive, user.quantityFive, user.priceFive);
+    addIfNotEmpty(user.itemSix, user.quantitySix, user.priceSix);
+    addIfNotEmpty(user.itemSeven, user.quantitySeven, user.priceSeven);
+    addIfNotEmpty(user.itemEight, user.quantityEight, user.priceEight);
+    addIfNotEmpty(user.itemNine, user.quantityNine, user.priceNine);
+    addIfNotEmpty(user.itemTen, user.quantityTen, user.priceTen);
+
+    return items;
   }
 
   Stream<List<User>> readUsers() => FirebaseFirestore.instance
@@ -125,62 +157,30 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => ReceiptScreen(
-                        companyName: user.companyName,
-                        customerName: user.customerName,
-                        customerphone: user.customerPhoneNumber,
-                        id: user.id,
-                        bankName: user.bankName,
-                        companyAcctNum: user.companyAcctNum,
-                        companyAcctName: user.companyAcctName,
-                        date: user.date,
-                        modeofpayment: user.modeofpayment,
-                        dueDate: user.dueDate,
-                        item: user.item,
-                        quantity: user.quantity,
-                        price: user.price,
-                        amountPaid: user.amountPaid,
-                        total: user.total,
-                        balance: user.balance,
-                        itemTwo: user.itemTwo,
-                        quantityTwo: user.quantityTwo,
-                        priceTwo: user.priceTwo,
-                        amountPaidTwo: user.amountPaidTwo,
-                        itemThree: user.itemThree,
-                        quantityThree: user.quantityThree,
-                        priceThree: user.priceThree,
-                        amountPaidThree: user.amountPaidThree,
-                        itemFour: user.itemFour,
-                        quantityFour: user.quantityFour,
-                        priceFour: user.priceFour,
-                        amountPaidFour: user.amountPaidFour,
-                        itemFive: user.itemFive,
-                        quantityFive: user.quantityFive,
-                        priceFive: user.priceFive,
-                        amountPaidFive: user.amountPaidFive,
-                        totalAmountPaid: user.totalAmountPaid,
-                        session: user.session,
-                        term: user.term,
-                        studentClass: user.studentClass,
-                        itemSix: user.itemSix,
-                        quantitySix: user.quantitySix,
-                        priceSix: user.priceSix,
-                        amountPaidSix: user.amountPaidSix,
-                        itemSeven: user.itemSeven,
-                        quantitySeven: user.quantitySeven,
-                        priceSeven: user.priceSeven,
-                        amountPaidSeven: user.amountPaidSeven,
-                        itemEight: user.itemEight,
-                        quantityEight: user.quantityEight,
-                        priceEight: user.priceEight,
-                        amountPaidEight: user.amountPaidEight,
-                        itemNine: user.itemNine,
-                        quantityNine: user.quantityNine,
-                        priceNine: user.priceNine,
-                        amountPaidNine: user.amountPaidNine,
-                        itemTen: user.itemTen,
-                        quantityTen: user.quantityTen,
-                        priceTen: user.priceTen,
-                        amountPaidTen: user.amountPaidTen,
+                        invoice: Invoice(
+                          id: user.id,
+                          date: user.date,
+                          companyName: user.companyName,
+                          customerName: user.customerName,
+                          customerPhone: user.customerPhoneNumber,
+                          dialCode: '+234',
+                          accountNumber: user.companyAcctNum,
+                          accountName: user.companyAcctName,
+                          bankName: user.bankName,
+                          modeOfPayment: user.modeofpayment,
+                          items: _buildItemsFromUser(user),
+                          total: double.tryParse(user.total) ?? 0.0,
+                          totalPaid:
+                              double.tryParse(user.totalAmountPaid) ?? 0.0,
+                          balance: double.tryParse(user.balance) ?? 0.0,
+                          // total: user.total,
+                          // totalPaid: user.totalAmountPaid,
+                          // balance: user.balance,
+                          dueDate: user.dueDate,
+                          session: user.session,
+                          term: user.term,
+                          studentClass: user.studentClass,
+                        ),
                       )));
         },
         tileColor: colorCodes.white,
@@ -295,19 +295,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               quantitySix: user.quantitySix,
                               priceSix: user.priceSix,
                               amountPaidSix: user.amountPaidSix,
-                               itemSeven: user.itemSeven,
+                              itemSeven: user.itemSeven,
                               quantitySeven: user.quantitySeven,
                               priceSeven: user.priceSeven,
                               amountPaidSeven: user.amountPaidSeven,
-                               itemEight: user.itemEight,
+                              itemEight: user.itemEight,
                               quantityEight: user.quantityEight,
                               priceEight: user.priceEight,
                               amountPaidEight: user.amountPaidEight,
-                               itemNine: user.itemNine,
+                              itemNine: user.itemNine,
                               quantityNine: user.quantityNine,
                               priceNine: user.priceNine,
                               amountPaidNine: user.amountPaidNine,
-                               itemTen: user.itemTen,
+                              itemTen: user.itemTen,
                               quantityTen: user.quantityTen,
                               priceTen: user.priceTen,
                               amountPaidTen: user.amountPaidTen,

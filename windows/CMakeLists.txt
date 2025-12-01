@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(go_invoice LANGUAGES CXX)
 
+set(CMAKE_GENERATOR_TOOLSET "v142") 
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "go_invoice")
